@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.addColumn("Posts", "UserId", {
+    queryInterface.addColumn("posts", "UserId", {
       type: Sequelize.INTEGER,
       references:{
         model:"users", //actually wants table name
@@ -15,6 +15,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-  queryInterface.removeColumn("Posts", "UserId")
+  queryInterface.removeColumn("posts", "UserId")
   }
 };

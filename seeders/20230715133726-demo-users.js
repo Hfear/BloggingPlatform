@@ -35,7 +35,7 @@ await queryInterface.bulkInsert(
 );
 
 await queryInterface.bulkInsert(
-  "Posts",
+  "posts",
   [
     {
       title: "top 10 of all time",
@@ -71,7 +71,7 @@ await queryInterface.bulkInsert(
 
   async down (queryInterface, Sequelize) {
     await queryInterface.bulkDelete("users", null, {});
-    await queryInterface.bulkDelete("Posts", null, {});
+    await queryInterface.bulkDelete("posts", null, {});
     await queryInterface.bulkDelete("comments", null, {});
 
   }

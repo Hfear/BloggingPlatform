@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
   class comment extends Model {
 
     static associate(models) {
-      // define association here
+      
+    this.belongsTo(models.User);
+    this.belongsTo(models.Post);
     }
   }
   comment.init({
