@@ -22,17 +22,6 @@ module.exports = {
 const users = await queryInterface.sequelize.query(`SELECT id FROM users`);
 const userId = users[0][0].id;
 
-await queryInterface.bulkInsert(
-  "comments",
-  [
-    {
-      message:"I felt very when you made that decison to really do that thing",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
-  {}
-);
 
 await queryInterface.bulkInsert(
   "posts",
@@ -64,6 +53,26 @@ await queryInterface.bulkInsert(
   ],
   {}
 );
+
+const posts = await queryInterface.sequelize.query(`SELECT id FROM posts`);
+const postId = posts[0][0].id;
+
+
+await queryInterface.bulkInsert(
+  "comments",
+  [
+    {
+      message:"I felt very when you made that decison to really do that thing",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      UserId: userId, 
+      PostId: postId,
+    },
+  ],
+  {}
+);
+
+
 
   },
 
