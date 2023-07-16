@@ -138,7 +138,25 @@ app.get("/posts/:id", async (req, res) => {
     }
   });
 
+  // Update a specific post
+app.patch("/posts/:id", async (req, res) => {
+    const postId = parseInt(req.params.id, 10);
   
+    try {
+      const [numberOfAffectedRows, affectedRows] = await Post.update(req.body, { where: { id: postId }, returning: true });
+  
+      if (numberOfAffectedRows > 0) {
+        res.status(200).json(affectedRows[0]);
+      } else {
+        res.status(404).send({ message: "post not found" });
+      }
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+      console.error(err);
+    }
+  });
+
+
 
 
 app.get("/", (req, res) => {

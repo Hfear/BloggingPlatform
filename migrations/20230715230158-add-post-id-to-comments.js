@@ -6,7 +6,7 @@ module.exports = {
     queryInterface.addColumn("comments", "PostId", {
       type: Sequelize.INTEGER,
       references:{
-        model:"comments", //actually wants table name
+        model:"posts", //actually wants table name
         key: "id",
       },
       onUpdate: "CASCADE",
