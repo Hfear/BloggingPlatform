@@ -3,6 +3,7 @@ const app = express();
 const port = 4000;
 const bcrypt = require("bcryptjs");
 const { Post, User } = require("./models");
+const session = require('express-session');
 
 app.use((req, res, next) => {
     console.log(`Request: ${req.method} ${req.originalUrl}`);
@@ -13,6 +14,15 @@ app.use((req, res, next) => {
     next();
   });
   app.use(express.json());
+
+  app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 3600000 // 1 hour
+    },
+  }));
 
   //lOGIN REQUEST
   app.post('/login', async (req, res) => {
@@ -32,6 +42,7 @@ app.use((req, res, next) => {
         if (result) {
           // Passwords match
           // TODO: Create a session for this user
+          req.session.userId = user.id;
   
           res.status(200).json({
             message: 'Logged in successfully',
