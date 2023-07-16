@@ -62,6 +62,18 @@ app.use((req, res, next) => {
     }
   });
 
+  //LOGOUT REQUEST
+  app.delete('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.sendStatus(500);
+        }
+
+        res.clearCookie('connect.sid');
+        return res.sendStatus(200);
+    });
+});
+
 //SIGNUP REQUEST
 app.post("/signup", async (req, res) => {
 
@@ -73,6 +85,9 @@ app.post("/signup", async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
       });
+
+      //automatically log in upouun signup
+      req.session.userId = user.id;
   
       // Send a response to the client informing them that the user was successfully created
       res.status(201).json({
@@ -92,6 +107,38 @@ app.post("/signup", async (req, res) => {
       });
     }
   });
+
+  // Get all posts
+app.get("/posts", async (req, res) => {
+    try {
+      const allPosts = await Post.findAll();
+  
+      res.status(200).json(allPosts);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: err.message });
+    }
+  });
+
+  // Get a specific post
+app.get("/posts/:id", async (req, res) => {
+    const postId = parseInt(req.params.id, 10);
+  
+    try {
+      const post = await Post.findOne({ where: { id: postId } });
+  
+      if (post) {
+        res.status(200).json(post);
+      } else {
+        res.status(404).send({ message: "post not found" });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: err.message });
+    }
+  });
+
+  
 
 
 app.get("/", (req, res) => {
