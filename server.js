@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = 4000;
 const bcrypt = require("bcryptjs");
-const { Post, User } = require("./models");
+const { Post, User, Comment } = require("./models");
 const session = require('express-session');
 require('dotenv').config();
 
@@ -121,7 +121,7 @@ app.post("/signup", async (req, res) => {
   });
 
   // Get all posts
-app.get("/posts", async (req, res) => {
+app.get("/posts",authenticateUser, async (req, res) => {
     try {
       const allPosts = await Post.findAll();
   
@@ -186,6 +186,23 @@ app.delete("/posts/:id", authenticateUser, async (req, res) => {
         res.status(500).send({message:err.message});
     }
 });
+
+  // Get all comments for a specific post
+  app.get("/comments/:userId", async (req, res) => {
+
+    const userId = parseInt(req.params.userId, 10)
+
+    try {
+      const usersPosts = await Comment.findAll({where: {userId :userId}});
+  
+      res.status(200).json(usersPosts);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: err.message });
+    }
+  });
+
+
 
 
 app.get("/", (req, res) => {
