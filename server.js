@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = 4000;
 const bcrypt = require("bcryptjs");
-const { Post, User, Comment } = require("./models");
+const { Post, User, comment } = require("./models");
 const session = require('express-session');
 require('dotenv').config();
 
@@ -136,6 +136,8 @@ app.get("/posts",authenticateUser, async (req, res) => {
 app.get("/posts/:id", authenticateUser, async (req, res) => {
     const postId = parseInt(req.params.id, 10);
   
+    console.log(postId);
+
     try {
       const post = await Post.findOne({ where: { id: postId } });
   
@@ -188,14 +190,20 @@ app.delete("/posts/:id", authenticateUser, async (req, res) => {
 });
 
   // Get all comments for a specific post
-  app.get("/comments/:userId", async (req, res) => {
+  app.get("/comments/:postId", async (req, res) => {
 
-    const userId = parseInt(req.params.userId, 10)
+    const postId = parseInt(req.params.postId, 10)
+    console.log(postId);
 
     try {
-      const usersPosts = await Comment.findAll({where: {userId :userId}});
-  
-      res.status(200).json(usersPosts);
+
+    //testing 
+    // const allComments = await comment.findAll();
+    // res.status(200).json(allComments);
+
+    const usersComments = await comment.findOne({where: {PostId : postId}});
+    res.status(200).json(usersComments);
+
     } catch (err) {
       console.error(err);
       res.status(500).send({ message: err.message });
