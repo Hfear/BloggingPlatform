@@ -4,27 +4,39 @@ const port = 4000;
 const bcrypt = require("bcryptjs");
 const { Post, User } = require("./models");
 const session = require('express-session');
+require('dotenv').config();
+
+
 
 app.use((req, res, next) => {
     console.log(`Request: ${req.method} ${req.originalUrl}`);
     res.on("finish", () => {
-      // the 'finish' event will be emitted when the response is handed over to the OS
-      console.log(`Response Status: ${res.statusCode}`);
+        // the 'finish' event will be emitted when the response is handed over to the OS
+        console.log(`Response Status: ${res.statusCode}`);
     });
     next();
-  });
-  app.use(express.json());
+});
+app.use(express.json());
 
-  app.use(session({
+app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 3600000 // 1 hour
+        maxAge: 3600000 // 1 hour
     },
-  }));
+}));
 
-  //lOGIN REQUEST
+//middleware function that checks if you are logged in, used as param in crud ops
+const authenticateUser = (req, res, next) => {
+    console.log("authenticattinggggg");
+  if (!req.session.userId) {
+    return res.status(401).json({ message: 'You must be logged in to view this page.' });
+  }
+  next();
+};
+
+//lOGIN REQUEST
   app.post('/login', async (req, res) => {
     try {
       // First, find the user by their email address
@@ -69,7 +81,7 @@ app.use((req, res, next) => {
             return res.sendStatus(500);
         }
 
-        res.clearCookie('connect.sid');
+        res.clearCookie("connect.sid");
         return res.sendStatus(200);
     });
 });
@@ -121,7 +133,7 @@ app.get("/posts", async (req, res) => {
   });
 
   // Get a specific post
-app.get("/posts/:id", async (req, res) => {
+app.get("/posts/:id", authenticateUser, async (req, res) => {
     const postId = parseInt(req.params.id, 10);
   
     try {
@@ -139,7 +151,7 @@ app.get("/posts/:id", async (req, res) => {
   });
 
   // Update a specific post
-app.patch("/posts/:id", async (req, res) => {
+app.patch("/posts/:id", authenticateUser, async (req, res) => {
     const postId = parseInt(req.params.id, 10);
   
     try {
@@ -156,11 +168,28 @@ app.patch("/posts/:id", async (req, res) => {
     }
   });
 
+app.delete("/posts/:id", authenticateUser, async (req, res) => {
+    const postId = parseInt(req.params.id, 10);
 
+    try{
+        const deletePost = await Post.destroy({where: {id: postId}});
+
+        if(deletePost > 0){
+            res.status(200).send({message: "Post deleted!"});
+        }
+        else{
+            res.status(404).send({message: "the post was not found"});
+        }
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send({message:err.message});
+    }
+});
 
 
 app.get("/", (req, res) => {
-  res.send("Welcome ");
+  res.send("checking if postman works ");
 });
 
 app.listen(port, () => {
