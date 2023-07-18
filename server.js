@@ -53,7 +53,7 @@ const authenticateUser = (req, res, next) => {
       bcrypt.compare(req.body.password, user.password, (error, result) => {
         if (result) {
           // Passwords match
-          // TODO: Create a session for this user
+          // Creates a session for this user
           req.session.userId = user.id;
   
           res.status(200).json({
@@ -189,29 +189,31 @@ app.delete("/posts/:id", authenticateUser, async (req, res) => {
     }
 });
 
-  // Get all comments for a specific post
-  app.get("/:postId/comments", authenticateUser, async (req, res) => {
+// Get all comments for a specific post
+app.get("/:postId/comments", authenticateUser, async (req, res) => {
 
-    const postId = parseInt(req.params.postId, 10)
-    console.log(postId);
+  const postId = parseInt(req.params.postId, 10)
+  console.log(postId);
 
-    try {
+  try {
 
-    //testing 
-    // const allComments = await comment.findAll();
-    // res.status(200).json(allComments);
+  //testing 
+  // const allComments = await comment.findAll();
+  // res.status(200).json(allComments);
 
-    const usersComments = await comment.findOne({where: {PostId : postId}});
-    res.status(200).json(usersComments);
+  const usersComments = await comment.findOne({where: {PostId : postId}});
+  res.status(200).json(usersComments);
 
-    } catch (err) {
-      console.error(err);
-      res.status(500).send({ message: err.message });
-    }
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message });
+  }
+});
+
+  
 
   //get comment by its id
-  app.get("/comments/:id", async (req,res) =>{
+  app.get("/comments/:id", authenticateUser, async (req,res) =>{
 
     const commentid = parseInt(req.params.id, 10)
 
