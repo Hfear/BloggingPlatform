@@ -120,10 +120,32 @@ app.post("/signup", async (req, res) => {
     }
   });
 
+  //create a post
+  app.post("/posts", authenticateUser, async (req, res) => {
+    try{
+      const newPost = await Post.create({
+        title : req.body.title,
+        content: req.body.content,
+        createdAt : new Date(),
+        updatedAt : new Date(),
+        UserId : req.session.userId
+
+      });
+
+
+      res.status(201).json(newPost);
+    }
+    catch(err){
+      console.error(err);
+      res.status(500).send({message: err.message});
+    }
+  });
+
   // Get all posts
 app.get("/posts",authenticateUser, async (req, res) => {
     try {
       const allPosts = await Post.findAll();
+
   
       res.status(200).json(allPosts);
     } catch (err) {
