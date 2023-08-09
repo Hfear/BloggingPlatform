@@ -32,4 +32,4 @@ Developed in July 2023, this Blogging Platform is a modern web application built
 
 1. Clone the repository:
    ```bash
-   git clone [your-repo-link]
+   git clone [https://github.com/Hfear/BloggingPlatform.git)https://github.com/Hfear/BloggingPlatform.git]
